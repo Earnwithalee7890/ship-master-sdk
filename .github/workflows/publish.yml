@@ -24,6 +24,17 @@ jobs:
       - name: Rename for GitHub Packages
         run: |
           node -e "let pkg=require('./package.json'); pkg.name='@earnwithalee7890/ship-master-sdk'; require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2))"
-      - run: npm publish --registry https://npm.pkg.github.com
+      - name: Check if version exists
+        id: check_version
+        run: |
+          VERSION=$(node -e "console.log(require('./package.json').version)")
+          if npm view @earnwithalee7890/ship-master-sdk@$VERSION version --registry https://npm.pkg.github.com > /dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Publish to GitHub Packages
+        if: steps.check_version.outputs.exists == 'false'
+        run: npm publish --registry https://npm.pkg.github.com
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
