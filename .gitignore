@@ -1,0 +1,5 @@
+node_modules
+dist
+shipmaster_project
+.DS_Store
+*.log
