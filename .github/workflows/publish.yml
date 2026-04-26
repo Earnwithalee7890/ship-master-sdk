@@ -21,6 +21,9 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
       - run: npm install
       - run: npm run build
+      - name: Rename for GitHub Packages
+        run: |
+          node -e "let pkg=require('./package.json'); pkg.name='@earnwithalee7890/ship-master-sdk'; require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, 2))"
       - run: npm publish --registry https://npm.pkg.github.com
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
